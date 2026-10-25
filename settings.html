@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings · HCM Lite</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <script>document.documentElement.dataset.theme = localStorage.getItem("hcm_theme") || "light";</script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="backdrop" id="backdrop"></div>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+      <div class="page-head">
+        <h1>Settings</h1>
+        <p class="sub">Rules that decide late, half day, leave and payslips.</p>
+      </div>
+
+      <div class="grid grid-main">
+        <div class="card">
+          <div class="card-head"><h2>Company rules</h2></div>
+          <form id="settings-form" novalidate>
+            <div class="field"><label for="companyName">Company name</label><input id="companyName" type="text" ><div class="error" id="companyName-error"></div></div>
+            <div class="form-row">
+              <div class="field"><label for="startTime">Office start time</label><input id="startTime" type="time" ><div class="error" id="startTime-error"></div></div>
+              <div class="field"><label for="graceMinutes">Grace minutes</label><input id="graceMinutes" type="number" min="0" max="180"><div class="error" id="graceMinutes-error"></div></div>
+            </div>
+            <div class="field"><label for="leaveQuota">Yearly leave quota (days)</label><input id="leaveQuota" type="number" min="0" max="365"><div class="error" id="leaveQuota-error"></div></div>
+            <div class="field">
+              <label>Face recognition attendance</label>
+              <label class="check"><input type="checkbox" id="requireCamera"> Require face recognition and location for check-in and check-out</label>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="officeLat">Office latitude</label><input id="officeLat" type="number" step="any"><div class="error" id="officeLat-error"></div></div>
+              <div class="field"><label for="officeLng">Office longitude</label><input id="officeLng" type="number" step="any"><div class="error" id="officeLng-error"></div></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="radiusM">Allowed radius (meters)</label><input id="radiusM" type="number" min="10" max="5000"><div class="error" id="radiusM-error"></div></div>
+              <div class="field"><label>&nbsp;</label><button class="btn btn-outline btn-block" type="button" onclick="useMyLocation()">Use my current location</button></div>
+            </div>
+            <div class="field"><label>Working days</label><div class="checks" id="workingDays"></div><div class="error" id="workingDays-error"></div></div>
+            <button class="btn btn-primary" type="submit">Save settings</button>
+          </form>
+        </div>
+        <div class="stack">
+          <div class="card">
+            <div class="card-head"><h2>How the rules work</h2></div>
+            <ul class="mini-list" style="display:block">
+              <li>Late: check-in after start time + grace minutes</li>
+              <li>Half day: worked under 5 hours</li>
+              <li>Absent: no record on a working day</li>
+              <li>Camera check: face recognized + inside the office radius</li>
+              <li>Leave counts working days only</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Danger zone</h2></div>
+            <p class="muted small" style="margin-bottom:12px">Deletes the company, employees, attendance and leaves from this browser.</p>
+            <button class="btn btn-danger" onclick="resetAllData()">Reset all data</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toasts" id="toasts"></div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/settings.js"></script>
+  <script>
+    const currentUser = requireRole("admin");
+    if (currentUser) {
+      renderShell("settings");
+      initSettings();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Profile · HCM Lite</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <script>document.documentElement.dataset.theme = localStorage.getItem("hcm_theme") || "light";</script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="backdrop" id="backdrop"></div>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+      <div class="page-head">
+        <h1>My Profile</h1>
+        <p class="sub">Your account details and password.</p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><h2>My details</h2></div>
+          <ul class="mini-list" id="profile-info"></ul>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Change password</h2></div>
+          <form id="pw-form" novalidate>
+            <div class="field"><label for="currentPassword">Current password</label><input id="currentPassword" type="password" ><div class="error" id="currentPassword-error"></div></div>
+            <div class="field"><label for="newPassword">New password</label><input id="newPassword" type="password" ><div class="error" id="newPassword-error"></div></div>
+            <div class="field"><label for="confirmPassword">Confirm new password</label><input id="confirmPassword" type="password" ><div class="error" id="confirmPassword-error"></div></div>
+            <button class="btn btn-primary" type="submit">Update password</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toasts" id="toasts"></div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/profile.js"></script>
+  <script>
+    const currentUser = requireRole(["admin", "employee"]);
+    if (currentUser) {
+      renderShell("profile");
+      initProfile();
+    }
+  </script>
+</body>
+</html>
