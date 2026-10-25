@@ -6,7 +6,7 @@ A small HR web app for **Admin** and **Employees**, built with plain **HTML, CSS
 No framework and no backend: all data is saved in the browser with `localStorage`.
 The app starts empty. The Admin creates the company, adds employees, and every number comes from what people do in the app.
 
-Built for the Saylani Hackathon (Beginner Track).
+Built for the Hackathon.
 
 ## Run it
 
