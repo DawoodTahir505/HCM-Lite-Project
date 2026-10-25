@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HCM Lite · Sign in</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.dataset.theme = localStorage.getItem("hcm_theme") || "light";</script>
+</head>
+<body>
+<div class="auth-page">
+  <section class="auth-hero">
+    <div class="brand"><div class="brand-logo">H</div><div class="brand-name">HCM Lite</div></div>
+    <h1>Simple HR for small teams.</h1>
+    <p>Attendance, leave and payslips in one lightweight app. Everything runs in your browser.</p>
+    <ul>
+      <li>Check in and out with automatic late and half-day rules</li>
+      <li>Leave requests with approval and balance tracking</li>
+      <li>Monthly payslips you can print or save as PDF</li>
+    </ul>
+  </section>
+
+  <section class="auth-panel">
+    <div class="auth-card">
+      <!-- First run only: create the company and the Admin account -->
+      <div class="card" id="setup-card" hidden>
+        <h2>Set up your company</h2>
+        <p class="sub">First run. This creates the Admin account.</p>
+        <form id="setup-form" novalidate>
+          <div class="field"><label for="companyName">Company name</label><input id="companyName" type="text" ><div class="error" id="companyName-error"></div></div>
+          <div class="field"><label for="adminName">Your name</label><input id="adminName" type="text" ><div class="error" id="adminName-error"></div></div>
+          <div class="field"><label for="adminEmail">Admin email</label><input id="adminEmail" type="email" ><div class="error" id="adminEmail-error"></div></div>
+          <div class="field"><label for="adminPassword">Password</label><input id="adminPassword" type="password" ><div class="error" id="adminPassword-error"></div></div>
+          <div class="field"><label for="adminConfirm">Confirm password</label><input id="adminConfirm" type="password" ><div class="error" id="adminConfirm-error"></div></div>
+          <button class="btn btn-primary btn-block" type="submit">Create company</button>
+        </form>
+      </div>
+
+      <!-- Normal login -->
+      <div class="card" id="login-card" hidden>
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to continue.</p>
+        <form id="login-form" novalidate>
+          <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username"><div class="error" id="email-error"></div></div>
+          <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password"><div class="error" id="password-error"></div></div>
+          <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+        <p class="muted small" style="margin-top:14px">Employees: use the email and password your Admin created for you.</p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="toasts" id="toasts"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

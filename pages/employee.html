@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Dashboard · HCM Lite</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <script>document.documentElement.dataset.theme = localStorage.getItem("hcm_theme") || "light";</script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="backdrop" id="backdrop"></div>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+      <div class="page-head">
+        <h1>My Dashboard</h1>
+        <p class="sub">Check in, track your attendance and apply for leave.</p>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="attendance">My attendance</button>
+        <button class="tab" data-tab="leave">Leave</button>
+      </div>
+
+      <section class="tab-panel" id="overview">
+        <div class="grid grid-main">
+          <div class="stack">
+            <div class="card today-card">
+              <div class="clock" id="clock"></div>
+              <div class="clock-date" id="clock-date"></div>
+              <div class="today-info" id="today-info"></div>
+              <div class="row">
+                <button class="btn btn-primary" id="btn-in" onclick="checkIn()">Check in</button>
+                <button class="btn btn-warning" id="btn-out" onclick="checkOut()">Check out</button>
+                <button class="btn btn-outline" id="btn-cam" onclick="openCameraCheck()"><span data-icon="camera" data-size="16"></span><span class="lbl">Check in with camera</span></button>
+              </div>
+              <p class="muted small" id="rules-hint" style="margin-top:14px"></p>
+            </div>
+            <div class="card" id="face-card"></div>
+            <div class="grid grid-4">
+              <div class="card stat"><div class="stat-icon teal" data-icon="clock"></div><div><div class="stat-value text" id="es-today">0</div><div class="stat-label">Today</div></div></div>
+              <div class="card stat"><div class="stat-icon green" data-icon="check"></div><div><div class="stat-value text" id="es-attended">0</div><div class="stat-label">Days attended (month)</div></div></div>
+              <div class="card stat"><div class="stat-icon orange" data-icon="alert"></div><div><div class="stat-value" id="es-late">0</div><div class="stat-label">Late / half days</div></div></div>
+              <div class="card stat"><div class="stat-icon blue" data-icon="calendar"></div><div><div class="stat-value" id="es-balance">0</div><div class="stat-label">Leave balance</div></div></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Announcements</h2></div>
+              <div id="ann-list"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Smart helper</h2></div>
+            <div id="helper-box"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="attendance" hidden>
+        <div class="card">
+          <div class="card-head"><h2>Attendance history</h2><input id="att-month" type="month" style="width:auto" aria-label="Month"></div>
+          <div class="table-wrap">
+            <table class="data">
+              <thead><tr><th>Date</th><th>Day</th><th>Check in</th><th>Check out</th><th>Hours</th><th>Status</th></tr></thead>
+              <tbody id="att-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <dialog id="cam-dialog" onclose="stopCamera()">
+        <div class="modal">
+          <div class="modal-head"><h2 id="cam-title">Camera check-in</h2><button class="icon-btn" type="button" onclick="closeCamera()" aria-label="Close">✕</button></div>
+          <div class="cam-view" id="cam-view"><video id="cam-video" autoplay playsinline muted></video><div class="cam-frame"></div></div>
+          <ul class="cam-status">
+            <li id="cs-cam" data-state="wait"><span class="dot"></span><span class="txt"></span></li>
+            <li id="cs-loc" data-state="wait"><span class="dot"></span><span class="txt"></span></li>
+            <li id="cs-face" data-state="wait"><span class="dot"></span><span class="txt"></span></li>
+          </ul>
+          <p class="muted small" id="cam-note"></p>
+          <div class="modal-foot">
+            <button class="btn btn-outline" type="button" onclick="startCameraChecks()">Try again</button>
+            <button class="btn btn-outline" type="button" onclick="closeCamera()">Close</button>
+          </div>
+        </div>
+      </dialog>
+
+      <section class="tab-panel" id="leave" hidden>
+        <div class="grid grid-4">
+          <div class="card stat"><div class="stat-icon purple" data-icon="calendar"></div><div><div class="stat-value" id="lv-quota">0</div><div class="stat-label">Yearly quota</div></div></div>
+          <div class="card stat"><div class="stat-icon green" data-icon="check"></div><div><div class="stat-value" id="lv-used">0</div><div class="stat-label">Approved days used</div></div></div>
+          <div class="card stat"><div class="stat-icon orange" data-icon="clock"></div><div><div class="stat-value" id="lv-pending">0</div><div class="stat-label">Pending days</div></div></div>
+          <div class="card stat"><div class="stat-icon teal" data-icon="calendar"></div><div><div class="stat-value" id="lv-balance">0</div><div class="stat-label">Balance left</div></div></div>
+        </div>
+        <div class="grid grid-main">
+          <div class="card">
+            <div class="card-head"><h2>My leave requests</h2></div>
+            <div class="table-wrap">
+              <table class="data">
+                <thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th><th>Admin comment</th><th></th></tr></thead>
+                <tbody id="my-leaves-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Apply for leave</h2></div>
+            <form id="leave-form" novalidate>
+              <div class="field"><label for="leaveType">Type</label>
+                <select id="leaveType"><option value="casual">Casual</option><option value="sick">Sick</option><option value="annual">Annual</option></select>
+              </div>
+              <div class="form-row">
+                <div class="field"><label for="fromDate">From</label><input id="fromDate" type="date" ><div class="error" id="fromDate-error"></div></div>
+                <div class="field"><label for="toDate">To</label><input id="toDate" type="date" ><div class="error" id="toDate-error"></div></div>
+              </div>
+              <div class="field"><label for="reason">Reason</label><textarea id="reason" rows="2"></textarea><div class="error" id="reason-error"></div></div>
+              <button class="btn btn-primary btn-block" type="submit">Apply</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="toasts" id="toasts"></div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/attendance.js"></script>
+  <script src="../js/camera.js"></script>
+  <script src="../js/leave.js"></script>
+  <script src="../js/announcements.js"></script>
+  <script src="../js/helper.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    const currentUser = requireRole("employee");
+    if (currentUser) {
+      renderShell("employee");
+      initEmployeeDashboard();
+    }
+  </script>
+</body>
+</html>
